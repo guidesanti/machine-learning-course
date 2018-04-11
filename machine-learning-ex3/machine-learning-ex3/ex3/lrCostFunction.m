@@ -36,14 +36,33 @@ grad = zeros(size(theta));
 %           grad = grad + YOUR_CODE_HERE (using the temp variable)
 %
 
+% 1. Compute cost
 
+% 1.1. Main part
+h = (X*theta);
+h = sigmoid(h);
+a = log(h);
+b = (1 - y);
+c = log(1 - h);
+temp1 = a'*y;
+temp2 = c'*b;
 
+% 1.2. Regularization part
+theta_aux = theta(2:end);
+aux1 = (lambda/(2*m));
+aux2 = (theta_aux'*theta_aux);
+reg = aux1*aux2;
 
+% Final cost
+J = (((-1)/m)*(temp1 + temp2) + reg);
 
-
-
-
-
+% 2. Compute grad
+a = (h - y)';
+grad = (1/m).*(a*X);
+grad = grad';
+grad1 = grad(1);
+grad = grad + ((lambda/m)*theta);
+grad(1) = grad1;
 
 % =============================================================
 
