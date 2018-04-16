@@ -62,23 +62,38 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% 1. y to matrix
+Y = zeros(m, num_labels);
+for i = 1:m
+  Y(i, y(i)) = 1;
+endfor
 
+% 2. Calculate the prediction h(x)
+H = zeros(m, num_labels);
+h1 = sigmoid([ones(m, 1) X] * Theta1');
+h2 = sigmoid([ones(m, 1) h1] * Theta2');
+H = h2;
 
+% 3. Calculate J(theta)
+a = log(H);
+a = Y.*a;
+  
+b = (1 - H);
+b = log(b);
+c = (1 - Y);
+d = c.*b;
+  
+r = (-1)*(a + d);
+J = (sum(r(:))/m);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+% 4. Calculate the regularization term
+t1 = Theta1(:,2:end);
+t2 = Theta2(:,2:end);
+r1 = (t1.*t1);
+r2 = (t2.*t2);
+reg = (sum(r1(:)) + sum(r2(:)));
+reg = (lambda*(reg/(2*m)));
+J += reg;
 
 % -------------------------------------------------------------
 
