@@ -62,19 +62,36 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-% 1. y to matrix
+% -------------------------------------------------------------
+% PREPARATION
+% -------------------------------------------------------------
+
+% y to matrix
 Y = zeros(m, num_labels);
 for i = 1:m
   Y(i, y(i)) = 1;
 endfor
 
-% 2. Calculate the prediction h(x)
+% Calculate the prediction h(x)
 H = zeros(m, num_labels);
-h1 = sigmoid([ones(m, 1) X] * Theta1');
-h2 = sigmoid([ones(m, 1) h1] * Theta2');
-H = h2;
+% Input layer (layer 1)
+a1 = [ones(m, 1) X];
+% 1st hidden layer (layer 2)
+z2 = a1 * Theta1';
+a2 = [ones(m, 1) sigmoid(z2)];
+% Output layer (layer 3)
+z3 = a2 * Theta2';
+a3 = sigmoid(z3);
+% Final h(x)
+H = a3;
 
-% 3. Calculate J(theta)
+% Add the bias units to a1 nd a2
+
+% -------------------------------------------------------------
+% COST FUNCTION
+% -------------------------------------------------------------
+
+% Calculate J(theta) without regularization term
 a = log(H);
 a = Y.*a;
   
@@ -86,16 +103,41 @@ d = c.*b;
 r = (-1)*(a + d);
 J = (sum(r(:))/m);
 
-% 4. Calculate the regularization term
+% Calculate the regularization term
 t1 = Theta1(:,2:end);
 t2 = Theta2(:,2:end);
 r1 = (t1.*t1);
 r2 = (t2.*t2);
 reg = (sum(r1(:)) + sum(r2(:)));
 reg = (lambda*(reg/(2*m)));
+
+% Calculate J(theta) with regularization
 J += reg;
 
 % -------------------------------------------------------------
+% GRADIENT
+% -------------------------------------------------------------
+
+% Output layer delta (layer 3)
+delta3 = (a3 - Y);
+% 1st hidden layer delta (layer 2)
+aux1 = Theta2';
+aux2 = delta3';
+delta2 = aux1*aux2;
+delta2 = delta2';
+aux3 = [ones(m, 1) sigmoidGradient(z2)];
+delta2 = delta2.*aux3;
+delta2 = delta2(:,2:end);
+
+Delta2 = ((delta3')*a2);
+Delta1 = ((delta2')*a1);
+
+Theta2_grad = ((1/m)*Delta2);
+Theta1_grad = ((1/m)*Delta1);
+
+% Add regularization
+ Theta2_grad = Theta2_grad + [zeros(size(Theta2_grad,1),1) ((lambda/m)*Theta2)(:,2:end)];
+ Theta1_grad = Theta1_grad + [zeros(size(Theta1_grad,1),1) ((lambda/m)*Theta1)(:,2:end)];
 
 % =========================================================================
 
