@@ -22,7 +22,7 @@ grad = zeros(size(theta));
 % 1. Compute the cost function J(theta)
 h = X*theta;
 aux = theta(2:end,:);
-J = ((1/(2*m))*(((h - y)'*(h - y)) + ((1/2)*(aux'*aux))));
+J = ((1/(2*m))*(((h - y)'*(h - y)) + (lambda*(aux'*aux))));
 
 % 2. Compute the gradient
 grad = ((1/m)*((h - y)'*X))';
