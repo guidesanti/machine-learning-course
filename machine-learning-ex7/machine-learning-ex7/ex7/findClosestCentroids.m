@@ -21,11 +21,25 @@ idx = zeros(size(X,1), 1);
 % Note: You can use a for-loop over the examples to compute this.
 %
 
+[m, dummy] = size(X);
 
-
-
-
-
+for i = 1:m
+  x = X(i,:);
+  mi = centroids(1,:);
+  aux = (x - mi);
+  d = aux*(aux');
+  c = 1;
+  for j = 2:K
+    mi = centroids(j,:);
+    aux = (x - mi);
+    daux = aux*(aux');
+    if (daux < d)
+      d = daux;
+      c = j;
+    endif
+  endfor
+  idx(i) = c;
+endfor
 
 % =============================================================
 
